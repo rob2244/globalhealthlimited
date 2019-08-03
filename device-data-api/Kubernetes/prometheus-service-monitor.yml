@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: device-data-api-monitor
+  namespace: ghl
+  labels:
+    type: monitor
+    app: device-data-api
+spec:
+  namespaceSelector: 
+    matchNames:
+    - ghl
+  selector:
+    matchLabels:
+      app: device-data-api
+      tier: web
+  endpoints:
+  - port: web

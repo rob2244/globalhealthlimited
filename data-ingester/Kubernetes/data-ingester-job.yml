@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-ingester
+  namespace: "ghl"
+spec:
+  parallelism: 5
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: data-ingester
+        image: rodevacr.azurecr.io/data-ingester:v2
+        env:
+        - name: ENVIRONMENT
+          value: "PROD"
+        - name: PGSQL_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: pgsqlpassword
+                key: password
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq
+              key: rabbitmq-password
+      
+
+      

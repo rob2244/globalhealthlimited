@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: device-data-api-service
+  namespace: ghl
+  labels:
+    app: device-data-api
+    tier: web
+spec:
+  selector:
+    app: device-data-api
+    tier: web
+  ports:
+    - name: web
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
