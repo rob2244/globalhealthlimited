@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-data-generator
+  namespace: ghl
+  labels:
+    app: device-data-generator
+    tier: device
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: device-data-generator
+      tier: client
+  template:
+    metadata:
+      labels:
+        app: device-data-generator
+        tier: client
+    spec:
+      containers:
+      - name: device-data-generator
+        image: rodevacr.azurecr.io/device-data-generator:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: ENVIRONMENT
+          value: "PROD"
+        - name: PGSQL_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: pgsqlpassword
+                key: password

@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:latest
+    deploy:
+      replicas: 1
+    volumes:
+    - type: bind
+      source: ${HOME}/docker/volumes/postgres
+      target: /var/lib/postgresql/data
+    ports: 
+    - 5432:5432
+  rabbitmq:
+    image: rabbitmq:3-management
+    deploy:
+      replicas: 1
+    ports: 
+    - 15672:15672
+    - 5672:5672
+  prometheus:
+    image: prom/prometheus
+    deploy:
+      replicas: 1
+    volumes:
+    - type: bind
+      source: ${HOME}/docker/volumes/prometheus
+      target: /etc/prometheus
+    ports: 
+    - 9090:9090
