@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"globalhealthlimited/core"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -18,7 +19,7 @@ type PromDeviceMetricStore struct {
 }
 
 // SaveDeviceMetric implements the DeviceMetricStore and creates a new metric
-func (prom *PromDeviceMetricStore) SaveDeviceMetric(metric DeviceMetric) error {
+func (prom *PromDeviceMetricStore) SaveDeviceMetric(metric core.DeviceMetric) error {
 	metricKey := getMetricKey(metric)
 	met, ok := prom.Metrics[metricKey]
 
@@ -31,17 +32,23 @@ func (prom *PromDeviceMetricStore) SaveDeviceMetric(metric DeviceMetric) error {
 	return nil
 }
 
-func getMetricKey(metric DeviceMetric) string {
+func getMetricKey(metric core.DeviceMetric) string {
 	return fmt.Sprintf("%s-%s", metric.Name, metric.DeviceKey)
 }
 
-func createMetric(metric DeviceMetric) prometheus.Histogram {
+func createMetric(metric core.DeviceMetric) prometheus.Histogram {
 	return promauto.NewHistogram(prometheus.HistogramOpts{
 		Namespace: "ghl",
 		Subsystem: metric.DeviceKey,
-		Name:      metric.Name,
+		Name:      string(metric.Name),
 		Help: fmt.Sprintf("Metric Name: %s, Device Identifier: %s",
 			metric.Name, metric.DeviceKey),
-		ConstLabels: prometheus.Labels{"device_id": metric.DeviceKey, "metric_name": metric.Name},
+		ConstLabels: prometheus.Labels{
+			"device_id":   metric.DeviceKey,
+			"metric_name": string(metric.Name),
+			"unit":        metric.Unit,
+			"latitude":    fmt.Sprintf("%f", metric.Latitude),
+			"longitude":   fmt.Sprintf("%f", metric.Longitude),
+		},
 	})
 }

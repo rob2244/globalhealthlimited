@@ -1,7 +1,8 @@
 package main
 
 import (
-	"globalhealthlimited/device-data-api/model"
+	"globalhealthlimited/core"
+	"globalhealthlimited/device-metric-api/model"
 	"log"
 	"net/http"
 
@@ -20,13 +21,13 @@ func main() {
 	handleError(err)
 	defer rabbitStore.Close()
 
-	r.POST("/api/device", postDevice([]model.DeviceMetricStore{promStore, rabbitStore}))
+	r.POST("/api/device", postDevice([]core.DeviceMetricStore{promStore, rabbitStore}))
 	r.Run(":8080")
 }
 
-func postDevice(stores []model.DeviceMetricStore) func(c *gin.Context) {
+func postDevice(stores []core.DeviceMetricStore) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var json model.DeviceMetric
+		var json core.DeviceMetric
 
 		if err := c.BindJSON(&json); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

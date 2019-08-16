@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: device-data-generator
-        image: rodevacr.azurecr.io/device-data-generator:v1
+        image: rodevacr.azurecr.io/device-data-generator:v3
         resources:
           limits:
             memory: "128Mi"

@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: device-report-generator
+  namespace: ghl
+  labels:
+    app: device-report-generator
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: device-data-generator
+            image: rodevacr.azurecr.io/device-report-generator:v1
+            env:
+            - name: ENVIRONMENT
+              value: PROD
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-password
+          restartPolicy: OnFailure

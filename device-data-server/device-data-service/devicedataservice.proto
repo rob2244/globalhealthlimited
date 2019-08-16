@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+service DeviceDataService {
+  rpc GetDeviceData(DeviceDataRequest) returns (DeviceDataResponse);
+  rpc GetIdentifiers(DeviceDataRequest) returns (stream IdentifierDataResponse);
+}
+
+message DeviceDataRequest { string deviceKey = 1; }
+
+message DeviceDataResponse {
+  string deviceKey = 1;
+  string publishDate = 2;
+  string brand = 3;
+  string company = 4;
+  string modelNumber = 5;
+}
+
+message IdentifierDataResponse {
+  string deviceID = 1;
+  string deviceType = 2;
+  string issuingAgency = 3;
+  int32 packageQuantity = 4;
+  string discontinueDate = 5;
+}

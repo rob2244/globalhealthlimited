@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"globalhealthlimited/core"
 	"globalhealthlimited/device-data-generator/model"
 	"log"
 	"math/rand"
@@ -28,7 +29,7 @@ func init() {
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	metrics := make(chan *model.DeviceMetric, 100)
+	metrics := make(chan *core.DeviceMetric, 100)
 	defer close(metrics)
 
 	for i := 0; i < numWorkers; i++ {
@@ -36,10 +37,10 @@ func main() {
 	}
 
 	dbClient, err := model.NewDeviceDataClient()
-	defer dbClient.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer dbClient.Close()
 
 	for {
 		dd, err := model.GenerateDeviceData(dbClient)
@@ -50,7 +51,7 @@ func main() {
 	}
 }
 
-func uploadDeviceData(metrics <-chan *model.DeviceMetric) {
+func uploadDeviceData(metrics <-chan *core.DeviceMetric) {
 	url := getURL()
 
 	for metric := range metrics {
@@ -70,7 +71,7 @@ func uploadDeviceData(metrics <-chan *model.DeviceMetric) {
 }
 
 func getURL() string {
-	if env := os.Getenv("ENVIRONMENT"); env == "PRODUCTION" {
+	if env := os.Getenv("ENVIRONMENT"); env == "PROD" {
 		return "http://device-data-api-service/api/device"
 	}
 
